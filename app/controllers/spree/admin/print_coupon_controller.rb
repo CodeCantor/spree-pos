@@ -8,7 +8,7 @@ class Spree::Admin::PrintCouponController < Spree::Admin::BaseController
   def print
     @coupon = Spree::Promotion.find_by code: params[:coupon_code]
     @calculator = @coupon.actions.first.calculator
-    @coupon_amount = @calculator.preferred_amount
+    @coupon_amount = @calculator.try(:preferred_amount)
     @coupon_amount = @calculator.preferred_percent unless @coupon_amount
     create_barcode
   end
