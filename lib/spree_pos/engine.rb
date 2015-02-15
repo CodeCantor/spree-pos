@@ -4,6 +4,7 @@ module SpreePos
     engine_name 'spree_pos'
 
     config.autoload_paths += %W(#{config.root}/lib)
+    config.assets.precompile += %w(admin/pos/refund/all.css admin/pos/refund/all.js)
 
     initializer "spree.spree_pos.preferences", :after => "spree.environment" do |app|
       SpreePos::Config = SpreePos::Configuration.new

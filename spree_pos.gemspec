@@ -1,10 +1,10 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_pos'
-  s.version     = '1.3'
+  s.version     = '3.0'
   s.summary     = 'Point of sale screen for Spree'
   s.required_ruby_version = '>= 1.8.7'
-  s.authors = ['Torsten R', 'Enrique Alvarez']
+  s.authors = ['Torsten R', 'Enrique Alvarez', 'Roman Smirnov']
 
   s.email             = 'enrique@codecantor.com'
 
@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.requirements << 'none'
 
 
-  s.add_dependency('spree_core', '>= 2.0')
+  s.add_dependency('spree_core', '~> 3.0.0.rc')
   s.add_dependency('barby')
   s.add_dependency('prawn')
   s.add_dependency('rqrcode') # missing dependency in barby

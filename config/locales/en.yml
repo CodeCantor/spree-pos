@@ -1,7 +1,9 @@
 en:
-  pos: POS
   product_added: Product added
   product_removed: Product removed
   quantity_changed: "Quantity changed"
   price_change: Price changed
-    
+  spree:
+    pos:
+      pos: POS
+      receipt_footer: "Más información info@nigramercato.com o llamando al 914 20 47 78"

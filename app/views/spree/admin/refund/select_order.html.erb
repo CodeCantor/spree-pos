@@ -1,7 +1,17 @@
 <div class="select_order">
     <%= form_tag 'select_items' do |f| %>
+      <p>
         <%= label_tag :order_number, 'Order Number' %>
         <%= text_field_tag :order_number %>
-        <%= submit_tag 'Search order' %>
+      </p>
+      <p>
+        <%= label_tag :reason_id, 'Refund Reason' %>
+        <%= select_tag :reason_id, options_from_collection_for_select(@reasons, "id", "name") %>
+      </p>
+      <p>
+        <%= label_tag :stock_location_id, 'Stock Location' %>
+        <%= select_tag :stock_location_id, options_from_collection_for_select(@stock_locations, "id", "name") %>       
+      </p>
+      <%= submit_tag 'Search order' %>
     <% end %>
 </div>

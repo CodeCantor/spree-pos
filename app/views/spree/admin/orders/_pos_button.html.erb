@@ -1,1 +1,3 @@
-<%= button_link_to("Pos", "/admin/pos/show/#{@order.number}" )%>
+<li>
+  <%= link_to_with_icon 'file', "POS", "/admin/pos/show/#{@order.number}" %>
+</li>

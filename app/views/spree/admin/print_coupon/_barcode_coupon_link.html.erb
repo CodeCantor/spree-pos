@@ -1,10 +1,12 @@
-<%= f.field_container :code do %>
-    <%= f.label :code %>
-    <%= f.text_field :code, :class => 'fullwidth' %>
-    <%= button_link_to t(:coupon_label),
+<%= f.field_container :code, class: ['form-group'] do %>
+  <%= f.label :code %>
+  <%= f.text_field :code, :class => 'form-control' %>
+  <%= button_link_to(t(:coupon_label),
                        "javascript:poptastic('/admin/print_coupon/#{@promotion.code}');",
-                       icon: 'icon-print' %>
+                       icon: 'print') if @promotion.persisted? %>
 <% end %>
+
+
 <SCRIPT TYPE="text/javascript">
     <!--
     var newwindow;
