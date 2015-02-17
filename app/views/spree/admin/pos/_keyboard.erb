@@ -17,16 +17,21 @@
       })
     });
   </script>
-  <input id="given" type="number">
-  <div class="keyboard">
-    <% 10.times.each do |i| %>
-      <button data-number="<%= i %>">
-        <%= i %>
-      </button>
-    <% end %>
-    <button id="delete">BORRAR</button>
-  </div>
-  <div id="return-money">
-
+  <div class="col-md-6">
+    <p>
+      <input id="given" type="number" class="form-control">
+    </p>
+    <div class="keyboard">
+      <p>
+        <% 10.times.each do |i| %>
+          <button data-number="<%= i %>">
+            <%= i %>
+          </button>
+        <% end %>
+        <button id="delete">BORRAR</button>
+      </p>
+    </div>
+    <div id="return-money">
+    </div>
   </div>
 </div>

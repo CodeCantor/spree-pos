@@ -1,37 +1,32 @@
-<% content_for :head do %>
-  <%= stylesheet_link_tag 'DateTimePicker' %>
-  <%= javascript_include_tag 'DateTimePicker' %>
-  <%= javascript_tag do %>
-    $(document).ready(function()
-    {
-
-    $("#dtBox").DateTimePicker();
-
-    });
-  <% end %>
+<% content_for :page_title do %>
+  <%= t('statistics') %>
 <% end %>
-<h3>Estadísticas</h3>
+
 <%= search_form_for @search, :url => spree.admin_report_path  do |s| %>
-  <div class="date-range-filter field align-center">
-    <%= label_tag nil, Spree.t(:start), :class => 'inline' %>
-    <%= s.text_field :updated_at_gt, :data => { :field => 'datetime' }, :class => 'datepicker-from', :value => datetimepicker_field_value(params[:q][:updated_at_gt]) %>
+  <div class="row">
+    <div class="col-md-3">
+      <%= label_tag nil, Spree.t(:start) %>
+      <%= s.text_field :updated_at_gt, :data => { :field => 'datetime' }, :class => 'datepicker datepicker-from  form-control', :value => datetimepicker_field_value(params[:q][:updated_at_gt]) %>
+    </div>
 
-    <span class="range-divider">
-          <i class="icon-arrow-right"></i>
-        </span>
-
-    <%= s.text_field :updated_at_lt, :data => { :field => 'datetime' }, :class => 'datepicker-to', :value => datetimepicker_field_value(params[:q][:updated_at_lt]) %>
-    <%= label_tag nil, Spree.t(:end), :class => 'inline' %>
-    <div id="dtBox"></div>
+    <div class="col-md-3">
+      <%= label_tag nil, Spree.t(:end) %>
+      <%= s.text_field :updated_at_lt, :data => { :field => 'datetime' }, :class => 'datepicker datepicker-to form-control', :value => datetimepicker_field_value(params[:q][:updated_at_lt]) %>
+    </div>
   </div>
-
-  <div class="actions filter-actions">
+    
+  <div class="actions form-actions">
+    <%= label_tag nil, ' ' %>
     <%= button Spree.t(:search), 'icon-search'  %>
   </div>
 <% end %>
-<hr />
-<ul>
-<%- @payment_methods.each do |pm,value| %>
-  <li><%= pm.name %>: <%= value[:total].format %></li>
-<% end %>
-</ul>
+
+
+<div class="col-md-12">
+  <hr />
+  <ul>
+    <%- @payment_methods.each do |pm,value| %>
+      <li><%= pm.name %>: <%= value[:total].format %></li>
+    <% end %>
+  </ul>
+</div>

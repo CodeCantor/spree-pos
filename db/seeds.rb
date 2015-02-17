@@ -1,6 +1,6 @@
 # Create a new shipping method used by the POS for using in shipping
 sm = Spree::ShippingMethod.new({
-  name: 'At Store2',
+  name: 'At Store',
   display_on: 'back_end',
   tracking_url: '',
 })

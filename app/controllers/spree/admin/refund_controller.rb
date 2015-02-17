@@ -2,14 +2,23 @@ class Spree::Admin::RefundController < Spree::Admin::BaseController
   layout 'spree/admin/layouts/refund'
 
   def select_order
-
+    @reasons = Spree::ReturnAuthorizationReason.active
+    @stock_locations = Spree::StockLocation.active
   end
 
   def select_items
     @order = Spree::Order.find_by(number: params[:order_number])
     if @order
       @order.return_authorizations.select(&:can_cancel?).map(&:cancel) if @order.return_authorizations.count > 0
-      @return_authorization = Spree::ReturnAuthorization.create(order: @order, reason: 'POS refund')
+      @return_authorization = Spree::ReturnAuthorization.create(order: @order, 
+          return_authorization_reason_id: params[:reason_id],
+          stock_location_id: params[:stock_location_id])
+      
+      unless @return_authorization.valid?
+        flash[:error] = @return_authorization.errors.full_messages.join("; ")
+        redirect_to action: :select_order
+      end
+
       if @order.state == 'complete'
         @variants = @order.variants
       else
@@ -45,13 +54,13 @@ class Spree::Admin::RefundController < Spree::Admin::BaseController
   def create_coupon
     amount = params[:coupon_amount].to_f
     description = params[:coupon_description]
-    create_discount_coupon(Spree::Promotion.random_code,amount,description, 'Coupon pos')
+    create_discount_coupon(Spree::Promotion.random_code, amount, description, 'Coupon pos')
     redirect_to "/admin/print_coupon/#{@coupon.code}"
   end
 
   protected
   def create_discount_coupon(code, amount, description = nil, name = nil)
-    @coupon = Spree::Promotion.create(name: name,event_name: 'spree.checkout.coupon_code_added', usage_limit: 1)
+    @coupon = Spree::Promotion.create(name: name, usage_limit: 1)
     @coupon.description = description unless description.try(&:empty?)
     @coupon.code = code
     action = @coupon.actions.build(type: 'Spree::Promotion::Actions::CreateAdjustment')
@@ -59,5 +68,6 @@ class Spree::Admin::RefundController < Spree::Admin::BaseController
     action.calculator = calculator
     @coupon.save!
     calculator.preferred_amount = amount
+    calculator.save!
   end
 end

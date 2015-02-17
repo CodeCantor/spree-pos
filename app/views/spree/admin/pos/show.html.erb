@@ -9,61 +9,67 @@
   //-->
   </SCRIPT>
 <% end %>
+
+<% content_for :page_title do %>
+  <%= 'POS' %>
+<% end %>
+
 <% content_for :sidebar do %>
-  <div class="search">
-      <legend><%= t('add_product') %>  </legend>
-
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h1 class="panel-title"><%= t('add_product') %></h1>
+    </div>
+    <div class="panel-body">
       <%= form_tag "/admin/pos/show/#{@order.number}" , :id => "product_search" do  %>
-      <input type="hidden" value="1" name="index">
-        <div class="box">
-          <p>
-            <%= label_tag :sku, t("sku") %><br />
-            <%= text_field_tag :sku, "" , :size => 15 %>
-            <%= button t("search") %>
-          </p>
-        </div>
+        <input type="hidden" value="1" name="index">
+        <p>
+          <%= label_tag :sku, t("sku") %><br />
+          <%= text_field_tag :sku, "" , :size => 15 %>
+          <%= button Spree.t("search"), nil, '', :class => 'btn-sm' %>
+        </p>
       <% end %>
-
-      <%= form_tag "/admin/pos/apply_coupon/#{@order.number}" , :id => "coupon_apply" do  %>
-          <input type="hidden" value="1" name="index">
-          <div class="box">
-              <p>
-                  <%= label_tag :coupon_code, t("coupon_code") %><br />
-                  <%= text_field_tag :coupon_code, "" , :size => 15 %>
-                  <%= button t("apply") %>
-              </p>
-          </div>
-      <% end %>
-
+    </div>
   </div>
-  <script type="text/javascript" language="JavaScript">
-    document.getElementById('sku').focus();
-  </script>
-  <% @pix = 30 %>
-  <div class="right">
-     <%= t(:discount )%>
-     <%= form_tag do %>
-     <%= select_tag("discount" , options_for_select( ["",0,5,10,15,20,25,30,35,40,50,60,70] ), :onchange => 'this.form.submit()')%> 
-     <%end%>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h1 class="panel-title"><%= t('apply_coupon_or_discount') %></h1>
+    </div>
+    <div class="panel-body">
+      <%= form_tag "/admin/pos/apply_coupon/#{@order.number}" , :id => "coupon_apply" do  %>
+        <input type="hidden" value="1" name="index">
+        <p>
+          <%= label_tag :coupon_code, t("coupon_code") %><br />
+          <%= text_field_tag :coupon_code, "" , :size => 15 %>
+          <%= button t("apply"), nil, '', :class => 'btn-sm' %>
+        </p>
+      <% end %>
 
-  </div><br/><br/><br/>
-  <a href="javascript:poptastic('/admin/pos/payment/<%=@order.number%>');" alt="Print"/>
-      <%= image_tag "admin/pos/print.png" %>
-  </a>
-  <a href="/admin/orders/<%=@order.number%>/edit">
-    <%= image_tag "admin/pos/order.jpg" , :alt => "View order" %> 
-  </a>  
-  <a href="/admin/pos/new?force=true" onclick="javascript:if (newwindow) newwindow.close()">
-    <%= image_tag "admin/pos/customer.png" , :alt => "New Customer" %> 
-  </a>  <br/>
-  <%= image_tag "admin/pos/barcode.jpg" , :alt => "Trenner" , :width => 280 , :height => 15 %>  <br/>
-  <%= link_to "Create refund", 'javascript:poptastic("/admin/pos/refund/select_order");' %> <br/>
-  <%= link_to "Create coupon", 'javascript:poptastic("/admin/pos/refund/select_coupon");' %> <br/>
-  <%= link_to "See reports", spree.admin_report_path %> <br/>
-<%end%>
+
+      <%= form_tag do %>
+        <%= label_tag :discount, t("discount") %><br />
+        <%= select_tag("discount" , options_for_select( ["",0,5,10,15,20,25,30,35,40,50,60,70] ), :onchange => 'this.form.submit()')%>
+      <% end %>
+    </div>
+  </div>
+
+  <ul class="nav nav-pills nav-stacked">
+    <li><%= link_to "Print receipt", "javascript:poptastic('/admin/pos/payment/#{@order.number}');" %></li>
+    <li><%= link_to "View order", [:edit, :admin, @order] %></li>
+    <li><%= link_to "New customer", "/admin/pos/new?force=true", :onclick => "javascript:if (newwindow) newwindow.close()" %></li>
+    <li><%= link_to "Create refund", [:new, :admin, @order, :customer_return] %></li>
+    <li><%= link_to "Create coupon", 'javascript:poptastic("/admin/pos/refund/select_coupon");' %></li>
+    <li><%= link_to "See reports", spree.admin_report_path %></li>
+  </ul>
+<% end %>
+
+<script type="text/javascript" language="JavaScript">
+  document.getElementById('sku').focus();
+</script>
+<% @pix = 30 %>
+
 <%= render partial: 'keyboard' %>
 <%= render 'spree/shared/error_messages', :target => @pos %>
-<table class="index">
+<table class="table">
   <tr>
     <th><%= t('item_description') %></th>
     <th><%= t('quantity') %></th>
@@ -73,7 +79,7 @@
   </tr>
   <% @order.line_items.each do | item | %>
   <tr>
-    <td width="300">
+    <td>
       <%=  image_tag item.variant.product.images.first.attachment.url(:mini) if item.variant.product.images.first %>
       <%= link_to( "#{item.variant.name} #{item.variant.options_text}" , edit_admin_product_url(item.variant.product)) %>
     </td>
@@ -95,9 +101,9 @@
       </big>
     </td>
     <td> 
-      <%= link_to image_tag("admin/pos/delete.png", :width =>@pix , :height =>@pix) , "/admin/pos/remove/#{@order.number}/#{item.variant.id}"  %> 
-      <%= link_to image_tag("admin/pos/plus.png", :width =>@pix , :height =>@pix) , 
-      "/admin/pos/add/#{@order.number}/#{item.variant.id}"    %> </td>
+      <%= link_to_with_icon 'delete', Spree.t('remove'), "/admin/pos/remove/#{@order.number}/#{item.variant.id}" %> 
+      <%= link_to_with_icon 'add', Spree.t('add'), "/admin/pos/add/#{@order.number}/#{item.variant.id}" %>
+    </td>
     <td>
       <big>  
         <%= form_tag do %>
@@ -110,7 +116,7 @@
 <% end %>
 
   <tr class="total">
-    <td colspan="3"><b><%= t('order_total') %>:</b></td>
+    <td colspan="3"><b><%= Spree.t('order_total') %>:</b></td>
     <td colspan="2" class="total"><span id="order_total"><%= @order.display_total.to_html %></span></td>
   </tr>
 </table>

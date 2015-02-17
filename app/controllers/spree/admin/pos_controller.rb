@@ -1,4 +1,6 @@
 class Spree::Admin::PosController < Spree::Admin::BaseController
+  include Spree::Core::ControllerHelpers::Order
+
   before_filter :get_order , :except => [:new, :report]
 
   def get_order
@@ -47,9 +49,6 @@ class Spree::Admin::PosController < Spree::Admin::BaseController
       variant = Spree::Variant.find(pid)
       line_item = @order.line_items.find { |line_item| line_item.variant_id == variant.id }
 
-      fire_event('spree.cart.add')
-      fire_event('spree.order.contents_changed')
-
       line_item.quantity -= 1
       if line_item.quantity == 0
         @order.line_items.delete line_item
@@ -63,14 +62,14 @@ class Spree::Admin::PosController < Spree::Admin::BaseController
 
   def apply_coupon
     @order.coupon_code = params[:coupon_code]
-    coupon_result = Spree::Promo::CouponApplicator.new(@order).apply
-    if coupon_result[:coupon_applied?]
-      add_notice coupon_result[:success] if coupon_result[:success].present?
-      redirect_to :action => :show
-    else
-      add_error coupon_result[:error]
-      redirect_to  :action => 'show'
+    handler = Spree::PromotionHandler::Coupon.new(@order).apply
+
+    if handler.error.present?
+      add_error handler.error
+    elsif handler.success
+      add_notice handler.success
     end
+    redirect_to :action => :show
   end
 
   def print
@@ -213,7 +212,7 @@ class Spree::Admin::PosController < Spree::Admin::BaseController
   end
   
   def init
-    @order = Spree::Order.new
+    @order = Spree::Order.new(pos_sell: true)
     @order.associate_user!(spree_current_user)
 
     if SpreePos::Config[:pos_ship_address]
@@ -234,15 +233,11 @@ class Spree::Admin::PosController < Spree::Admin::BaseController
     spree_user_session[:pos_order] = @order.number
   end
 
-  def add_variant var , quant = 1
+  def add_variant variant, quantity = 1
     init unless @order
-
-    # Using the same populator as OrderContoller#populate
-    populator = Spree::OrderPopulator.new(@order, Spree::Config[:currency])
-    populator.populate(variants: { var => quant})
-
-    fire_event('spree.cart.add')
-    fire_event('spree.order.contents_changed')
+    # Using the same code as OrderContoller#populate
+    options  = (params[:options] || {}).merge(currency: current_currency)
+    @order.contents.add(variant, quantity, options)
 
     self.set_shipping_method
     @order.save!

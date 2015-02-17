@@ -72,7 +72,9 @@ So there is a migration supplied that provides a ean (European Article code, may
 
 TO-DO
 -----
- * TESTS !!!!!!!!!!!!!!!!!!!!!!!!!
+ * Move all texts to SpreePos::Config or to locale files
+ * Fix creation of "At store" shipping method in seeds
+ * TESTS !!!
  * Being able to assign a user directly to an order directly from the interface for later invoice printing.
  * Do ease the mechanism for devolutions
  * Refactor the view so it has the calculator prettier

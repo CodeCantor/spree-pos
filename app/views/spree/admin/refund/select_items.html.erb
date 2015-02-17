@@ -20,7 +20,7 @@
                     <td class="align-center"><%= units.select(&:shipped?).size %></td>
                     <td class="align-center"><%= units.select(&:returned?).size %></td>
                     <td class="return_quantity align-center">
-                        <% if @return_authorization.received? %>
+                        <% if @return_authorization.customer_returned_items? %>
                             <%= @return_authorization.inventory_units.group_by(&:variant)[variant].try(:size) || 0 %>
                         <% elsif units.select(&:shipped?).empty? %>
                             0
